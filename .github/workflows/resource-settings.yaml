@@ -37,7 +37,8 @@ jobs:
       TERCEN_OPERATOR_STATS_PROJECT: ${{ secrets.TERCEN_OPERATOR_STATS_PROJECT }}
       TERCEN_COMMITTER_NAME: ${{ secrets.TERCEN_COMMITTER_NAME_AG }}
       TERCEN_COMMITTER_EMAIL: ${{ secrets.TERCEN_COMMITTER_EMAIL_AG }}
-
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     
@@ -48,6 +49,10 @@ jobs:
       with:
         r-version: ${{ matrix.config.r }}
         http-user-agent: ${{ matrix.config.http-user-agent }}
+        
+    - name: Install dependencies
+      run: |
+        sudo apt-get install libcurl4-openssl-dev
         
     - name: Install R packages
       run: |
