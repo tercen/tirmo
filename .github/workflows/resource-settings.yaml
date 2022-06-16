@@ -1,0 +1,64 @@
+name: Compute Operator Resource Settings
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the main branch
+on:
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    # This example triggers the workflow every day at 12:30 and 18:30 UTC:
+    - cron: '30 12,18 * * *'
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'
+        required: true
+        default: 'warning'
+      tags:
+        required: false
+        description: 'Test scenario tags'
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - {os: ubuntu-latest,   r: 'release'}
+    
+    env:
+      TERCEN_SERVICE_URI: ${{ secrets.TERCEN_SERVICE_URI }}
+      TERCEN_GITHUB_USER_USERNAME: ${{ secrets.TERCEN_GITHUB_USER_USERNAME }}
+      TERCEN_GITHUB_USER_PASSWORD: ${{ secrets.TERCEN_GITHUB_USER_PASSWORD }}
+      TERCEN_OPERATOR_STATS_TEAM: ${{ secrets.TERCEN_OPERATOR_STATS_TEAM }}
+      TERCEN_OPERATOR_STATS_PROJECT: ${{ secrets.TERCEN_OPERATOR_STATS_PROJECT }}
+      TERCEN_COMMITTER_NAME: ${{ secrets.TERCEN_COMMITTER_NAME_AG }}
+      TERCEN_COMMITTER_EMAIL: ${{ secrets.TERCEN_COMMITTER_EMAIL_AG }}
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v2
+    
+    - uses: r-lib/actions/setup-r@master
+      with:
+        r-version: ${{ matrix.config.r }}
+        http-user-agent: ${{ matrix.config.http-user-agent }}
+        
+    - name: Install R packages
+      run: |
+        install.packages('dplyr')
+        install.packages('jsonlite')
+        install.packages('gh')
+        install.packages('remotes')
+        remotes::install_github('tercen/teRcen', ref = '0.12.7')
+      shell: Rscript {0}
+      
+    - name: Compute Operator Resource Settings
+      run: |
+        source("./get_operator_resource_settings.R")
+      shell: Rscript {0}
