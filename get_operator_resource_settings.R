@@ -52,11 +52,7 @@ seed <- 42
 set.seed(seed)
 
 one_gb_list <- c(
-  "https://github.com/tercen/flowsom_operator",
-  "https://github.com/tercen/tracksom_operator",
   "https://github.com/tercen/scRNAseq_QC_operator",
-  "https://github.com/tercen/opencyto_onestep_operator",
-  "https://github.com/tercen/flowsom_mst_operator",
   "https://github.com/tercen/flowjo_export_operator",
   "https://github.com/tercen/umap_operator",
   "https://github.com/tercen/MEM_operator",
@@ -115,7 +111,7 @@ new_content <- jsonlite::base64_enc(txt_json)
 new_dec <- base64_dec(new_content)
 prev_dec <- base64_dec(previous_json$content)
 
-if(!(all(length(new_dec) == length(prev_dec)) && all(new_dec == prev_dec))) {
+if(!identical(new_dec, prev_dec)) {
   gh(
     "PUT /repos/{owner}/{repo}/contents/{path}",
     owner = 'tercen',
