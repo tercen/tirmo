@@ -60,6 +60,7 @@ jobs:
         install.packages('jsonlite')
         install.packages('gh')
         install.packages('remotes')
+        remotes::install_github('tercen/mtercen', ref = '1.0.8')
         remotes::install_github('tercen/teRcen', ref = '0.12.7')
       shell: Rscript {0}
       
