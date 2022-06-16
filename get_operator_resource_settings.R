@@ -122,6 +122,6 @@ if(!identical(new_dec, prev_dec)) {
     content = new_content,
     sha = previous_json$sha,
     .accept = 'application/vnd.github.v3+json',
-    .token = gitcreds::gitcreds_get()$password
+    .token = Sys.getenv("GITHUB_TOKEN")
   )
 }
