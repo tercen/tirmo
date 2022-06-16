@@ -112,8 +112,10 @@ previous_json <- gh(
 )
 
 new_content <- jsonlite::base64_enc(txt_json) 
+new_dec <- base64_dec(new_content)
+prev_dec <- base64_dec(previous_json$content)
 
-if(!all(base64_dec(new_content) == base64_dec(previous_json$content))) {
+if(!(all(length(new_dec) == length(prev_dec)) && all(new_dec == prev_dec))) {
   gh(
     "PUT /repos/{owner}/{repo}/contents/{path}",
     owner = 'tercen',
