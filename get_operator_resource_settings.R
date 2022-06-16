@@ -2,6 +2,7 @@ library(dplyr)
 library(tercen)
 library(jsonlite)
 library(gh)
+library(gitcreds)
 
 ## Tercen settings
 serviceUri <- Sys.getenv("TERCEN_SERVICE_URI")
@@ -95,7 +96,6 @@ df_out <- df %>%
   mutate(ratio = replace(ratio, which(r2 < min_r_squared), min_ratio)) %>%
   ungroup()
 
-# View(df_out)
 txt_json <- prettify(toJSON(df_out))
 
 ### GH API -> replace json
@@ -121,6 +121,7 @@ if(!identical(new_dec, prev_dec)) {
     committer = list(name = committerName, email = committerMail),
     content = new_content,
     sha = previous_json$sha,
-    .accept = 'application/vnd.github.v3+json'
+    .accept = 'application/vnd.github.v3+json',
+    .token = gitcreds::gitcreds_get()$password
   )
 }
