@@ -55,9 +55,10 @@ jobs:
         install.packages('dplyr')
         install.packages('jsonlite')
         install.packages('gh')
+        install.packages('digest')
       shell: Rscript {0}
       
-    - name: Compute Operator Resource Settings
+    - name: Check test status
       run: |
         source("./check_test_status.R")
       shell: Rscript {0}
