@@ -1,2 +1,5 @@
-# -operator_resource_settings
-A workflow to estimate Tercen operators resource settings.
+# Operator Sentinel
+
+The operator sentinel is a bot running workflows to watch and improve operators.
+
+At the moment, it estimates Tercen operators resource settings or checks guidelines compliance.
