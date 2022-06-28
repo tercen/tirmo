@@ -1,4 +1,4 @@
-name: Compute Operator Resource Settings
+name: Check operator test status
 
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the main branch
