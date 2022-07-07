@@ -4,8 +4,8 @@ name: Check operator test status
 # events but only for the main branch
 on:
   schedule:
-    # 6am on fridays
-    - cron: '0 6 * * 5'
+    # 6am on days 1 and 15 of each month
+    - cron: '0 6 1,15 * *'
   workflow_dispatch:
     inputs:
       logLevel:
