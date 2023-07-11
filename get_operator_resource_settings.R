@@ -38,7 +38,14 @@ file_stats = Find(function(p) identical(p$name, "stats-summary.csv"), files)
 
 bytes <- client$fileService$download(file_stats$id)
 char <- rawToChar(bytes)
-df_raw <- read.table(text = char, header = TRUE)
+lns <- strsplit(char, "\n")[[1]]
+sp <- sapply(lns, strsplit, "\t", USE.NAMES = FALSE)
+lg <- lengths(sp, use.names = FALSE)
+exclude_rows <- which(lg != 35)
+if(length(exclude_rows) > 0) {
+  lns <- lns[-exclude_rows]
+}
+df_raw <- read.table(text = lns, header = TRUE)
 
 ## Default resource settings
 min_ratio <- 5
