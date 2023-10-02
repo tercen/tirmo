@@ -59,35 +59,39 @@ seed <- 42
 
 set.seed(seed)
 
-one_gb_list <- c(
-  "https://github.com/tercen/scRNAseq_QC_operator",
-  "https://github.com/tercen/flowjo_export_operator",
-  "https://github.com/tercen/umap_operator",
-  "https://github.com/tercen/MEM_operator",
-  "https://github.com/tercen/normalizeCounts_operator",
-  "https://github.com/tercen/fast_tSNE_operator",
-  "https://github.com/tercen/vst_operator",
-  "https://github.com/tercen/DESeq2_two_conditions_operator"
-)
-
 df <- df_raw %>% 
+  filter(operator_url != "") %>%
   mutate(total_size = files_size + qt_size + row_size + col_size) %>%
   rename(operator = operator_url) %>%
   mutate(base_memory = base_mem_default) %>%
-  mutate(base_memory = case_when(operator %in% one_gb_list ~ base_mem_big,
-                                 operator_kind == "DockerOperator"  ~ base_mem_big,
+  mutate(base_memory = case_when(operator_kind == "DockerOperator"  ~ base_mem_big,
                                  TRUE ~ base_mem_default)) %>%
   mutate(ratio = (memory_total_usage - base_memory) / total_size) %>% 
   mutate(ratio_nobm = (memory_total_usage) / total_size) %>% 
-  select(operator, operator_version, memory_total_usage, total_size, base_memory, ratio, row_size, col_size, files_size, qt_size)
+  select(operator, operator_version, task_duration, memory_total_usage, total_size, base_memory, ratio, row_size, col_size, files_size, qt_size)
 
 do.lm <- function(df_tmp, confint_level) {
+  
+  ## Estimate memory usage
   m <- lm(memory_total_usage ~ total_size - 1, data = df_tmp)
   c_out <- coefficients(m)
   ci_out <- confint(m, level = confint_level)[, 2]
   r2 <- (summary(m)$r.squared)
   names(ci_out) <- paste0("upper", names(ci_out))
-  return(tibble(ratio_est = c_out, ratio_upper = ci_out, r2 = r2))
+  
+  ## Estimate task duration
+  m <- lm(task_duration ~ total_size, data = df_tmp)
+  c_out_dur <- coefficients(m)
+  typical_duration <- median(df_tmp$task_duration, na.rm = TRUE)
+
+  return(tibble(
+    ratio_est = c_out,
+    ratio_upper = ci_out,
+    r2 = r2,
+    typical_duration = round(typical_duration / 1e3, digits = 1)#,
+    # duration_coef = round(c_out_dur[2], digits = 1), 
+    # duration_intercept = round(c_out_dur[1], digits = 1)
+  ))
 }
 
 df_out <- df %>% 
@@ -101,7 +105,27 @@ df_out <- df %>%
   mutate(ratio = replace(ratio_rounded, which(ratio_rounded < min_ratio), min_ratio)) %>%
   mutate(ratio = replace(ratio, which(ratio > max_ratio), max_ratio)) %>%
   mutate(ratio = replace(ratio, which(r2 < min_r_squared), min_ratio)) %>%
+  mutate(version = numeric_version(version, strict = FALSE)) %>%
+  arrange(uri, version) %>%
+  mutate(version = as.character(version)) %>%
   ungroup()
+  
+
+### Overwrite with custom settings
+custom_json <- gh(
+  "GET /repos/{owner}/{repo}/contents/{path}",
+  owner = 'tercen',
+  repo = 'app-library',
+  path = 'operator_resource_settings_custom.json',
+  .accept = 'application/vnd.github.v3+json',
+  .token = Sys.getenv("GITHUB_TOKEN")
+)
+custom_dec <- base64_dec(custom_json$content)
+custom_df <- jsonlite::fromJSON(rawToChar(custom_dec))
+
+df_out <- 
+  df_out %>% 
+  dplyr::full_join(custom_df)
 
 txt_json <- prettify(toJSON(df_out))
 
