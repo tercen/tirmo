@@ -123,9 +123,12 @@ custom_json <- gh(
 custom_dec <- base64_dec(custom_json$content)
 custom_df <- jsonlite::fromJSON(rawToChar(custom_dec))
 
-df_out <- 
-  df_out %>% 
-  dplyr::full_join(custom_df)
+dups <- paste0(df_out$uri, df_out$version) %in% paste0(custom_df$uri, custom_df$version)
+if(any(dups)) df_out <- df_out[!dups, ]
+
+# df_out <- 
+#   df_out %>% 
+#   dplyr::full_join(custom_df)
 
 txt_json <- prettify(toJSON(df_out))
 
