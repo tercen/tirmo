@@ -1,0 +1,52 @@
+---
+title: "Tercen Library Dashboard"
+format: html
+editor: visual
+echo: false
+warning: false
+message: false
+---
+
+```{r}
+library(dplyr)
+library(jsonlite)
+
+url <- "https://raw.githubusercontent.com/tercen/app-library/refs/heads/master/tercen/library-report.json"
+data <- jsonlite::fromJSON(url)
+
+data$success_documents$status <- "success"
+data$notest_documents$status <- "no_test"
+data$blacklisted_documents$status <- "error"
+data$failed_documents$status <- "error"
+data$no_release_documents <- as_tibble(data$no_release_documents) |>
+  rename(url = "value") |>
+  mutate(status = "no_release")
+
+df <- bind_rows(data) |>
+  mutate(kind = case_when(
+    grepl("_operator", url) ~ "Operator",
+    grepl("_app", url) ~ "App",
+    grepl("_template", url) ~ "Template",
+    grepl("_dataset", url) ~ "Dataset",
+    TRUE ~ "Unknown"
+  ))
+
+tb <- table(df$kind, df$status)
+pt <- round(prop.table(tb, margin = 1) * 100, 2)
+```
+
+## Tercen Library Summary
+
+```{r}
+table(df$kind)
+```
+
+## Library Quality
+
+```{r}
+print(tb)
+print(pt)
+
+knitr::kable(df |> select(-retry, -error) |>
+  filter(status != "success" & kind != "Unknown"))
+```
