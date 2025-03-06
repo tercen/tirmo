@@ -2,6 +2,8 @@ on:
   workflow_dispatch:
   push:
     branches: main
+  schedule:
+    - cron: '00 8 * * *' # every day at 8am
 
 name: Quarto Publish
 
