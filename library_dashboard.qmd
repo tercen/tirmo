@@ -1,6 +1,11 @@
 ---
 title: "Tercen Library Dashboard"
-format: html
+format: 
+  dashboard:
+    theme: default
+    orientation: rows
+    expandable: true
+    scrolling: true
 editor: visual
 echo: false
 warning: false
@@ -46,18 +51,67 @@ lib_data <- jsonlite::fromJSON(lib_url)[["repos"]] |> as_tibble() |>
   ))
 ```
 
-## Tercen Library Summary
+
+## Row {.flow}
 
 ```{r}
-table(lib_data$kind)
+lib_tb <- table(lib_data$kind)
 ```
 
-## Library Quality
 
 ```{r}
-print(tb)
-print(pt)
+#| content: valuebox
+#| title: "Operators"
+list(
+  icon = "calculator",
+  color = "primary",
+  value = lib_tb[["Operator"]]
+)
+```
 
+```{r}
+#| content: valuebox
+#| title: "Templates"
+list(
+  icon = "bar-chart-steps",
+  color = "primary",
+  value = lib_tb[["Template"]]
+)
+```
+
+```{r}
+#| content: valuebox
+#| title: "Datasets"
+list(
+  icon = "database",
+  color = "primary",
+  value = lib_tb[["Dataset"]]
+)
+```
+
+```{r}
+#| content: valuebox
+#| title: "Apps"
+list(
+  icon = "box-fill",
+  color = "primary",
+  value = lib_tb[["App"]]
+)
+```
+
+
+## Row {.flow}
+
+```{r}
+#| title: "World Map"
+#| padding: 0px
+#| fill: false
+knitr::kable(tb)
+```
+
+## Row {.flow}
+
+```{r}
 knitr::kable(
   df |> 
     select(-retry, -error) |>

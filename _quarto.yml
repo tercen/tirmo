@@ -9,10 +9,9 @@ website:
   navbar:
     left:
       - href: library_dashboard.qmd
-        text: Home
+        text: Library Dashboard
 
 format:
   html:
-    theme: cosmo
-    css: styles.css
-    toc: true
+    theme: yeti
+    toc: false
