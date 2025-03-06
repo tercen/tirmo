@@ -103,7 +103,7 @@ list(
 ## Row {.flow}
 
 ```{r}
-#| title: "World Map"
+#| title: "Library Quality"
 #| padding: 0px
 #| fill: false
 knitr::kable(tb)
@@ -112,6 +112,9 @@ knitr::kable(tb)
 ## Row {.flow}
 
 ```{r}
+#| title: "Issue List"
+#| padding: 0px
+#| fill: false
 knitr::kable(
   df |> 
     select(-retry, -error) |>
