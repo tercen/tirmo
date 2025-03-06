@@ -39,7 +39,7 @@ jobs:
       TERCEN_OPERATOR_STATS_PROJECT: ${{ secrets.TERCEN_OPERATOR_STATS_PROJECT }}
       TERCEN_COMMITTER_NAME: ${{ secrets.TERCEN_COMMITTER_NAME_AG }}
       TERCEN_COMMITTER_EMAIL: ${{ secrets.TERCEN_COMMITTER_EMAIL_AG }}
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GITHUB_TOKEN: ${{ secrets.TERCEN_GITHUB_PAT }}
       
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
