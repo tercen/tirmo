@@ -33,12 +33,23 @@ df <- bind_rows(data) |>
 
 tb <- table(df$kind, df$status)
 pt <- round(prop.table(tb, margin = 1) * 100, 2)
+
+
+lib_url <- "https://raw.githubusercontent.com/tercen/app-library/refs/heads/master/tercen/library.json"
+lib_data <- jsonlite::fromJSON(lib_url)[["repos"]] |> as_tibble() |>
+  mutate(kind = case_when(
+    grepl("_operator", url) ~ "Operator",
+    grepl("_app", url) ~ "App",
+    grepl("_template", url) ~ "Template",
+    grepl("_dataset", url) ~ "Dataset",
+    TRUE ~ "Unknown"
+  ))
 ```
 
 ## Tercen Library Summary
 
 ```{r}
-table(df$kind)
+table(lib_data$kind)
 ```
 
 ## Library Quality
@@ -47,6 +58,9 @@ table(df$kind)
 print(tb)
 print(pt)
 
-knitr::kable(df |> select(-retry, -error) |>
-  filter(status != "success" & kind != "Unknown"))
+knitr::kable(
+  df |> 
+    select(-retry, -error) |>
+    filter(status != "success" & kind != "Unknown")
+)
 ```
