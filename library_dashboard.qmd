@@ -1,8 +1,7 @@
 ---
-title: "Tercen Library Dashboard"
+title: "Library Dashboard"
 format: 
   dashboard:
-    theme: default
     orientation: rows
     expandable: true
     scrolling: true
@@ -58,12 +57,15 @@ lib_data <- jsonlite::fromJSON(lib_url)[["repos"]] |> as_tibble() |>
 lib_tb <- table(lib_data$kind)
 ```
 
+### Column
+
+#### Row
 
 ```{r}
 #| content: valuebox
 #| title: "Operators"
 list(
-  icon = "calculator",
+  # icon = "calculator",
   color = "primary",
   value = lib_tb[["Operator"]]
 )
@@ -73,17 +75,19 @@ list(
 #| content: valuebox
 #| title: "Templates"
 list(
-  icon = "bar-chart-steps",
+  # icon = "bar-chart-steps",
   color = "primary",
   value = lib_tb[["Template"]]
 )
 ```
 
+#### Row
+
 ```{r}
 #| content: valuebox
 #| title: "Datasets"
 list(
-  icon = "database",
+  # icon = "database",
   color = "primary",
   value = lib_tb[["Dataset"]]
 )
@@ -93,14 +97,13 @@ list(
 #| content: valuebox
 #| title: "Apps"
 list(
-  icon = "box-fill",
+  # icon = "box-fill",
   color = "primary",
   value = lib_tb[["App"]]
 )
 ```
 
-
-## Row {.flow}
+### Column
 
 ```{r}
 #| title: "Library Quality"
