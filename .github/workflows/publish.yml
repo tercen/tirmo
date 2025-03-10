@@ -33,5 +33,7 @@ jobs:
         uses: quarto-dev/quarto-actions/publish@v2
         with:
           target: gh-pages
+          GITHUB_USERNAME: ${{ secrets.TIRMO_USERNAME }}
+          GITHUB_EMAIL:  ${{ secrets.TIRMO_EMAIL }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
