@@ -10,8 +10,10 @@ website:
     left:
       - href: library_dashboard.qmd
         text: Library Dashboard
+      - href: resource_settings.qmd
+        text: Resource Settings
 
 format:
   html:
-    theme: yeti
+    theme: cosmo
     toc: false

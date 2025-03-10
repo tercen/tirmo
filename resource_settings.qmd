@@ -1,0 +1,6 @@
+---
+title: "Resource Settings"
+editor: visual
+---
+
+Coming soon.
