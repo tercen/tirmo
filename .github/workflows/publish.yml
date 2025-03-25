@@ -3,7 +3,7 @@ on:
   push:
     branches: main
   schedule:
-    - cron: '00 8 * * *' # every day at 8am
+    - cron: '00 7 * * 2,4' # every tuesday,thursday at 7am
 
 name: Quarto Publish
 
